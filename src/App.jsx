@@ -316,46 +316,96 @@ function last7Days() {
   return out;
 }
 
-function BodyDiagram({ active }) {
+function BodyFigure({ view, active }) {
+  const isBack = view === "back";
   const on = (key) => !!active[key];
-  const fill = (key) => (on(key) ? "var(--sp-teal)" : "var(--sp-panel-alt)");
-  const stroke = (key) => (on(key) ? "var(--sp-teal)" : "var(--sp-grid)");
-  const op = (key) => (on(key) ? 0.85 : 1);
+  const regionFill = (key) => (on(key) ? "var(--sp-teal)" : "var(--sp-muscle)");
+  const regionOpacity = (key) => (on(key) ? 0.9 : 1);
 
   return (
+    <svg viewBox="0 0 140 262" className="body-figure-svg">
+      {/* base silhouette */}
+      <g fill="var(--sp-body-base)" stroke="var(--sp-grid)" strokeWidth="1.5">
+        <ellipse cx="70" cy="20" rx="14" ry="16" />
+        <rect x="63" y="34" width="14" height="10" rx="3" />
+        <path d="M40,50 C40,42 50,40 70,40 C90,40 100,42 100,50 L96,122 C94,137 84,148 70,150 C56,148 46,137 44,122 Z" />
+        <polyline points="40,52 27,96 23,146" fill="none" strokeWidth="17" strokeLinecap="round" />
+        <polyline points="100,52 113,96 117,146" fill="none" strokeWidth="17" strokeLinecap="round" />
+        <circle cx="23" cy="150" r="7.5" />
+        <circle cx="117" cy="150" r="7.5" />
+        <polyline points="58,150 55,207 57,250" fill="none" strokeWidth="21" strokeLinecap="round" />
+        <polyline points="82,150 85,207 83,250" fill="none" strokeWidth="21" strokeLinecap="round" />
+        <ellipse cx="57" cy="256" rx="8" ry="5" />
+        <ellipse cx="83" cy="256" rx="8" ry="5" />
+      </g>
+
+      {/* shoulders (front: front delt, back: rear delt) */}
+      <circle cx="40" cy="53" r="11" fill={regionFill("shoulders")} opacity={regionOpacity("shoulders")} />
+      <circle cx="100" cy="53" r="11" fill={regionFill("shoulders")} opacity={regionOpacity("shoulders")} />
+
+      {!isBack ? (
+        <>
+          {/* chest */}
+          <path d="M46,52 C46,46 56,44 70,44 C84,44 94,46 94,52 L91,72 C80,78 60,78 49,72 Z" fill={regionFill("chest")} opacity={regionOpacity("chest")} />
+          {/* biceps */}
+          <ellipse cx="31" cy="76" rx="8" ry="15" transform="rotate(-8 31 76)" fill={regionFill("biceps")} opacity={regionOpacity("biceps")} />
+          <ellipse cx="109" cy="76" rx="8" ry="15" transform="rotate(8 109 76)" fill={regionFill("biceps")} opacity={regionOpacity("biceps")} />
+          {/* core */}
+          <g>
+            <rect x="58" y="80" width="24" height="40" rx="7" fill={regionFill("core")} opacity={regionOpacity("core")} />
+            <line x1="70" y1="86" x2="70" y2="114" stroke="var(--sp-bg)" strokeWidth="1.2" />
+            <line x1="60" y1="92" x2="80" y2="92" stroke="var(--sp-bg)" strokeWidth="1.2" />
+            <line x1="60" y1="102" x2="80" y2="102" stroke="var(--sp-bg)" strokeWidth="1.2" />
+            <line x1="60" y1="112" x2="80" y2="112" stroke="var(--sp-bg)" strokeWidth="1.2" />
+          </g>
+          {/* quads */}
+          <ellipse cx="58" cy="178" rx="12" ry="28" fill={regionFill("legs")} opacity={regionOpacity("legs")} />
+          <ellipse cx="82" cy="178" rx="12" ry="28" fill={regionFill("legs")} opacity={regionOpacity("legs")} />
+        </>
+      ) : (
+        <>
+          {/* back (traps + lats) */}
+          <g>
+            <path d="M45,50 L95,50 L89,108 C80,116 60,116 51,108 Z" fill={regionFill("back")} opacity={regionOpacity("back")} />
+            <line x1="70" y1="52" x2="70" y2="95" stroke="var(--sp-bg)" strokeWidth="1.2" />
+          </g>
+          {/* triceps */}
+          <ellipse cx="31" cy="78" rx="8" ry="15" transform="rotate(-8 31 78)" fill={regionFill("triceps")} opacity={regionOpacity("triceps")} />
+          <ellipse cx="109" cy="78" rx="8" ry="15" transform="rotate(8 109 78)" fill={regionFill("triceps")} opacity={regionOpacity("triceps")} />
+          {/* glutes (core bucket) */}
+          <ellipse cx="70" cy="130" rx="22" ry="15" fill={regionFill("core")} opacity={regionOpacity("core")} />
+          {/* hamstrings */}
+          <ellipse cx="58" cy="175" rx="12" ry="24" fill={regionFill("legs")} opacity={regionOpacity("legs")} />
+          <ellipse cx="82" cy="175" rx="12" ry="24" fill={regionFill("legs")} opacity={regionOpacity("legs")} />
+        </>
+      )}
+    </svg>
+  );
+}
+
+function BodyDiagram({ active }) {
+  const on = (key) => !!active[key];
+  return (
     <div className="body-diagram-wrap">
-      <svg viewBox="0 0 120 210" className="body-diagram-svg">
-        {/* base silhouette */}
-        <circle cx="60" cy="18" r="13" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-        <rect x="54" y="29" width="12" height="10" fill="var(--sp-panel-alt)" />
-        <path d="M32,42 L88,42 L78,102 L42,102 Z" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-        <rect x="18" y="44" width="16" height="60" rx="8" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-        <rect x="86" y="44" width="16" height="60" rx="8" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-        <rect x="42" y="104" width="16" height="90" rx="7" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-        <rect x="62" y="104" width="16" height="90" rx="7" fill="var(--sp-panel-alt)" stroke="var(--sp-grid)" strokeWidth="1" />
-
-        {/* colored muscle regions */}
-        <ellipse cx="34" cy="46" rx="11" ry="9" fill={fill("shoulders")} stroke={stroke("shoulders")} strokeWidth="1" opacity={op("shoulders")} />
-        <ellipse cx="86" cy="46" rx="11" ry="9" fill={fill("shoulders")} stroke={stroke("shoulders")} strokeWidth="1" opacity={op("shoulders")} />
-
-        <rect x="40" y="46" width="40" height="26" rx="6" fill={fill("chest")} stroke={stroke("chest")} strokeWidth="1" opacity={op("chest")} />
-
-        <rect x="45" y="74" width="30" height="26" rx="5" fill={fill("core")} stroke={stroke("core")} strokeWidth="1" opacity={op("core")} />
-
-        <rect x="19" y="52" width="14" height="30" rx="7" fill={fill("arms")} stroke={stroke("arms")} strokeWidth="1" opacity={op("arms")} />
-        <rect x="87" y="52" width="14" height="30" rx="7" fill={fill("arms")} stroke={stroke("arms")} strokeWidth="1" opacity={op("arms")} />
-
-        <rect x="43" y="106" width="15" height="86" rx="7" fill={fill("legs")} stroke={stroke("legs")} strokeWidth="1" opacity={op("legs")} />
-        <rect x="63" y="106" width="15" height="86" rx="7" fill={fill("legs")} stroke={stroke("legs")} strokeWidth="1" opacity={op("legs")} />
-      </svg>
+      <div className="body-figures">
+        <div className="body-figure">
+          <BodyFigure view="front" active={active} />
+          <span className="body-figure-label">Front</span>
+        </div>
+        <div className="body-figure">
+          <BodyFigure view="back" active={active} />
+          <span className="body-figure-label">Back</span>
+        </div>
+      </div>
       <div className="body-diagram-legend">
         {[
           { key: "chest", label: "Chest" },
+          { key: "back", label: "Back" },
           { key: "shoulders", label: "Shoulders" },
-          { key: "arms", label: "Arms" },
+          { key: "biceps", label: "Biceps" },
+          { key: "triceps", label: "Triceps" },
           { key: "core", label: "Core" },
           { key: "legs", label: "Legs" },
-          { key: "back", label: "Back" },
         ].map((item) => (
           <span key={item.key} className={`body-legend-chip ${on(item.key) ? "body-legend-chip-active" : ""}`}>
             {item.label}
@@ -394,12 +444,7 @@ function HomeTab({ workouts, logs, onGoPlan, onGoLog }) {
     logs.forEach((l) => {
       if (!days.includes(l.date)) return;
       const m = muscleById[l.workoutId];
-      if (m === "chest") active.chest = true;
-      if (m === "shoulders") active.shoulders = true;
-      if (m === "biceps" || m === "triceps") active.arms = true;
-      if (m === "core") active.core = true;
-      if (m === "legs") active.legs = true;
-      if (m === "back") active.back = true;
+      if (m && m !== "other") active[m] = true;
     });
     return active;
   }, [workouts, logs, days]);
@@ -675,6 +720,8 @@ function Styles() {
         --sp-teal: #47c9b0;
         --sp-red: #e2574c;
         --sp-grid: #2c3136;
+        --sp-body-base: #1e2227;
+        --sp-muscle: #333a42;
         font-family: 'Inter', sans-serif;
         background: var(--sp-bg);
         color: var(--sp-text);
@@ -813,8 +860,11 @@ function Styles() {
       }
 
       .body-panel { display: flex; justify-content: center; }
-      .body-diagram-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
-      .body-diagram-svg { width: 100%; max-width: 160px; height: auto; }
+      .body-diagram-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+      .body-figures { display: flex; gap: 18px; justify-content: center; }
+      .body-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+      .body-figure-svg { width: 108px; height: auto; }
+      .body-figure-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sp-text-dim); }
       .body-diagram-legend { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
       .body-legend-chip { font-size: 11px; padding: 5px 10px; border-radius: 999px; background: var(--sp-panel-alt); border: 1px solid var(--sp-grid); color: var(--sp-text-dim); }
       .body-legend-chip-active { background: rgba(71,201,176,0.15); border-color: var(--sp-teal); color: var(--sp-teal); font-weight: 600; }
